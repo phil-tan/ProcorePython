@@ -1,0 +1,38 @@
+<!-- templates/login.html -->
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<style>
+    #login-form-container {
+        background-color: lightgray;
+        width: 60%;
+        padding: 20px;
+        border-radius: 5px;
+        border: solid black 1px;
+        margin-top: 100px;
+    }
+
+</style>
+    <div class="container card justify-items-center" id="login-form-container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('oauth.app_auth') }}" method="POST">
+            <h4>Sign In To Procore</h4>
+            <br>
+            <br>
+            <div style="text-align: center; border: 0px solid">
+              <button class="btn btn-md" style="background-color: orangered" type="submit">Sign In</button>
+            </div>
+          </form>
+    </div>
+</div>
+{% endblock %}
+
+
