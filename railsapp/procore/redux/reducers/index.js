@@ -5,14 +5,14 @@ import {observations,
   obs_columns,
   obs_show_photos,
   create_loading,
-  obs_loading } from '../reducers/obs_reducers'
+  obs_loading } from './obs_reducers'
 import {
   inspections,
   inspection,
   insp_loading,
   albums,
   photos,
-  project} from '../reducers/insp_reducers'
+  project} from './insp_reducers'
 
 
 //Table columns

@@ -11,19 +11,19 @@ import { obs_filtered } from "../../redux/reducers/obs_reducers";
 const FilterForm = (props) => {
   const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    if(props.obs_filtered.length === 0){
-      props.apply_obs_filters(props.observations, props.obs_filters_set, '');
-    }
-  }, [props.observations, props.obs_filters_set]);
+  // useEffect(() => {
+  //   if(props.obs_filtered.length === 0){
+  //     props.apply_obs_filters(props.observations, props.obs_filters_set, '');
+  //   }
+  // }, [props.observations, props.obs_filters_set]);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    props.apply_obs_filters(props.observations, props.obs_filters_set, query);
-  };
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   props.apply_obs_filters(props.observations, props.obs_filters_set, query);
+  // };
 
   return (
-    <form className="toolbar-section" onSubmit={onSubmit}>
+    <form className="toolbar-section" onSubmit={(e)=>console.log(e)}>
       <div className="d-flex justify-content-between">
         <div>
           <strong>Table Filters </strong>

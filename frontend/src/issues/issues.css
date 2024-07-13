@@ -1,0 +1,94 @@
+.obs-table {
+   border: 1px solid black;
+   border-radius: 10px;
+   -webkit-print-color-adjust: exact;
+   print-color-adjust: exact !important;
+   table-layout: fixed;
+ }
+ 
+ .obs-table th, td {
+     padding: 4px;
+     word-wrap: break-word;
+ }
+ 
+ .obs-table th {
+   border: 1px solid lightgray;
+ }
+ 
+ .obs-table td {
+   border: 1px solid lightgray;
+ }
+ 
+ .obs-cell {
+   border: 1px solid gray;
+ }
+ 
+ .obs-header-row {
+   background-color: darkblue !important;
+   color: white;
+   cursor: pointer;
+   -webkit-print-color-adjust:exact;
+   print-color-adjust: exact;
+ }
+ 
+ .obs-page {
+   padding: 5px 40px 40px 40px;
+   width: 100%;
+ }
+ 
+ #obs-log {
+   -webkit-print-color-adjust: exact;
+   print-color-adjust: exact;
+ }
+ 
+ .obs-title {
+   color: darkblue;
+ }
+ 
+ .photos-inner-cell {
+   display: inline-block;
+   padding-right: 5px;
+ }
+ 
+ .status-closed {
+   background-color: rgb(170, 174, 179) !important;
+ }
+ 
+ .status-ready-for-review {
+   background-color: rgb(103, 103, 241) !important;
+ }
+
+ .filter-panel {
+   width: 100%;
+   display: flex;
+   flex-wrap: wrap;
+ }
+ 
+ .obs-filter {
+   width: 20em !important;
+   height: 6em;
+   padding: 3px;
+   font-weight: normal;
+   display: block;
+ }
+ 
+ .obs-filter .form-control {
+   display: block;
+   height: 3em;
+ }
+ 
+ .obs-filter label {
+   display: block;
+   font-style: italic;
+   font-weight: normal;
+ }
+ 
+ .toolbar-section {
+   width: 100%;
+   height: 100%;
+   border: 1px solid gray;
+   border-radius: 5px;
+   padding: 10px;
+   background-color: lightsteelblue;
+ }
+ 

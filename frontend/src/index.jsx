@@ -8,7 +8,11 @@ import ReduxPromise from "redux-promise";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { rootReducer, initialState } from "./redux/reducers";
 import { createBrowserHistory } from "history";
-import App from './App'
+import App from './App' 
+import AllProjects from "./projects/AllProjects";
+import ProjectPage from "./projects/ProjectPage";
+import IssuesPage from "./issues/IssuesPage";
+import ActivitiesListTable from "./activities/ActivitiesListTable";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const middlewares = applyMiddleware(logger, ReduxPromise);
@@ -19,12 +23,12 @@ root.render(
   <Provider store={store}>
     <BrowserRouter history={history}>
       <Routes>
-      <Route path="/react/app" element={<App />} />
-        {/* <Route
-          path="/projects/:project_id/obs_app/obs_index"
-          element={<ObsPage />}
+      <Route path="/app" element={<App />} />
+      <Route path="/app/projects" element={<AllProjects />} />
+      <Route path="/app/projects/:project_id/activities" element={<ActivitiesListTable/>}/>
+      <Route path="/app/projects/:project_id/issues" element={<IssuesPage />}
         />
-        <Route
+        {/*<Route
           path="/projects/:project_id/insp_app/insp"
           element={<InspectionList />}
         />

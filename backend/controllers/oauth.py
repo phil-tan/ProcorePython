@@ -7,6 +7,7 @@ import requests
 import requests.auth
 from dotenv import load_dotenv
 from functools import wraps
+from urllib.parse import urlparse, parse_qs
 # ------------------------- END IMPORTS ------------------------- #
 
 oauth = Blueprint('oauth', __name__)
@@ -21,17 +22,30 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
 OAUTH_URL = os.getenv("OAUTH_URL")
 BASE_URL = os.getenv("BASE_URL")
+# COMPANY_ID = os.getenv("COMPANY_ID")
+COMPANY_ID=562949953436954
+print(f'company_id={COMPANY_ID}')
+ITEM_DATE_CUSTOM_FIELD_ID = os.getenv("ITEM_DATE_CUSTOM_FIELD_ID")
 # end loading env variables
 
+# for loading next page after login page
+next_page = {}
+next_page['url'] = '/'
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get('bool'):
-            return redirect('/login')
+            print(f"decorator requested: {request.url}")
+            next_page['url'] = request.url
+            return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
 
+def redirect_url(default='pages.home'):
+    return next_page.get('url') or \
+           request.referrer or \
+           url_for(default)
 
 def gen_secret_key():
     """
@@ -116,8 +130,6 @@ def make_authorization_url():
         "response_type": "code",
         "redirect_uri": REDIRECT_URI
     }
-    print(f"Oauth url: {OAUTH_URL}")
-    print(f"params: {params}")
     url = OAUTH_URL + "/oauth/authorize?" + urllib.parse.urlencode(params)
     return url
 
@@ -167,7 +179,7 @@ def app_callback():
             session['created_at'] = update_date(created_at)
             session['expires_at'] = update_expire(created_at)
             session['bool'] = True
-    return redirect('/')
+    return redirect(redirect_url())
 
     
 @oauth.route('/session_info', methods=['POST', 'GET'])
@@ -190,8 +202,7 @@ def app_page_me():
     return html % (my_id, login)
 
 
-@oauth.route('/users/refreshtoken', methods=["POST"])
-@login_required
+@oauth.route('/refreshtoken', methods=["GET", "POST"])
 def app_refresh_token():
     access_token = session.get('access_token')
     refresh_token = session.get('refresh_token')
@@ -209,7 +220,7 @@ def app_refresh_token():
     session['refresh_token'] = response_json['refresh_token']
     session['created_at'] = update_date(response_json['created_at'])
     session['expires_at'] = update_expire(response_json['created_at'])
-    return redirect('/')
+    return redirect(redirect_url())
 
 
 @oauth.route('/users/revoketoken')
@@ -228,3 +239,22 @@ def app_revoke_token():
     session['bool'] = False
     print("Session after clearing:", session)
     return redirect('/')
+
+
+def refresh_app():
+    access_token = session.get('access_token')
+    refresh_token = session.get('refresh_token')
+    headers = {"Authorization": "Bearer " + access_token}
+    data = {
+        "client_id": CLIENT_ID,
+        "grant_type": "refresh_token",
+        "redirect_uri": REDIRECT_URI,
+        "client_secret": CLIENT_SECRET,
+        "refresh_token": refresh_token
+        }
+    response = requests.post(BASE_URL+'/oauth/token', data=data, headers=headers)
+    response_json = response.json()
+    session['access_token'] = response_json['access_token']
+    session['refresh_token'] = response_json['refresh_token']
+    session['created_at'] = update_date(response_json['created_at'])
+    session['expires_at'] = update_expire(response_json['created_at'])

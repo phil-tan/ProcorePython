@@ -10,7 +10,7 @@
       <li class="nav-item dropdown" role="button">
         <!-- <img class="avatar dropdown-toggle" id="navbarDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"> -->
         <summary class="dropdown-toggle" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <img src="{{ url_for('static', filename='images/defaultpic.png') }}" style="height:40px" alt="image alt text" />
+          <img src="{{ url_for('pages.download_file', filename='images/defaultpic.png') }}" style="height:40px" alt="image alt text" />
         </summary>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{{ url_for('oauth.app_page_me') }}">Account details</a>

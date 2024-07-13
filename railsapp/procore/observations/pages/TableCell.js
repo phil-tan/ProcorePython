@@ -51,14 +51,14 @@ const TableCell = (props) => {
     case "description":
       div = (
         <td key="description">
-          <EditForm
+          {/* <EditForm
             text=<p className="obs-title">
               <strong>{props.item.name}</strong>
             </p>
             obs={props.item}
             function="edit"
             origin_form='obs_table'
-          />
+          /> */}
           <div
             className="text-justify"
             dangerouslySetInnerHTML={{

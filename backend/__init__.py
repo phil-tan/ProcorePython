@@ -2,7 +2,7 @@
 
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-from .controllers.oauth import login_required
+from .controllers.oauth import login_required, refresh_app
 from flask_cors import CORS
 import os
 
@@ -22,11 +22,12 @@ def create_app():
 
     # Serve the React pages route here
     
-    @app.route('/react', defaults={'path': ''})
-    @app.route('/react/<path:path>')
+    @app.route('/app', defaults={'path': ''})
+    @app.route('/app/<path:path>')
     @login_required
     def serve_react_app(path):
         print('serving react')
+        refresh_app()
         print(path)
         return send_from_directory(app.static_folder, 'index.html')
     
@@ -43,10 +44,16 @@ def create_app():
     from .controllers.oauth import oauth
     app.register_blueprint(oauth)
 
-    from .controllers.api import api
-    app.register_blueprint(api)
-
     from .controllers.cli import cli
     app.register_blueprint(cli)
+
+    from .controllers.projects import projects
+    app.register_blueprint(projects)
+
+    from .controllers.issues import issues
+    app.register_blueprint(issues)
+
+    from .controllers.activities import activities
+    app.register_blueprint(activities)
 
     return app

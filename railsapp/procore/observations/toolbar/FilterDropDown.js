@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { MultiSelect } from "react-multi-select-component";
-import { setFilterFormSelected } from "../../redux/actions/obs_actions";
+import { setFilterFormSelected } from "../../redux/actions/item_actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
@@ -14,7 +14,7 @@ const FilterDropDown = (props) => {
 
   useEffect(() => {
     const curr_options = options
-    let options_array = props.observations.map((obs) => obs[column.name]);
+    let options_array = props.items.map((item) => item[column.name]);
     options_array = [...new Set(options_array)];
     const new_options = options_array.map((opt) => ({
       label: opt,
@@ -24,10 +24,10 @@ const FilterDropDown = (props) => {
     console.log("if selected all")
     console.log(selected)
     console.log(curr_options)
-    if(props.obs_filtered.length===0 || new Set(selected) === new Set(curr_options)){
+    if(props.item_filtered.length===0 || new Set(selected) === new Set(curr_options)){
       setSelected(new_options)
     }
-  }, [props.observations]);
+  }, [props.items]);
 
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const FilterDropDown = (props) => {
   }, [selected, options]);
 
   return (
-    <div key={column.name} className="obs-filter form-group">
+    <div key={column.name} className="item-filter form-group">
       <label htmlFor={`${column.name}-bs-select`}>{column.label}</label>
       {/* <select className='form-control' multiple id={`${column.name}-bs-select`} data-actions-box="true" name={column.name}>
       { options.map((opt) => <option value={opt}>{opt}</option>) }
@@ -52,9 +52,9 @@ const FilterDropDown = (props) => {
 
 function mapStateToProps(state) {
   return {
-    observations: state.observations,
-    obs_filtered: state.obs_filtered,
-    obs_filters_set: state.obs_filters_set,
+    items: state.items,
+    item_filtered: state.item_filtered,
+    item_filters_set: state.item_filters_set,
   };
 }
 
