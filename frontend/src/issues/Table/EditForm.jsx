@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-// import { Editor } from "react-draft-wysiwyg";
-// import {
-//   EditorState,
-//   ContentState,
-//   convertFromHTML,
-// } from "draft-js";
-// import { stateToHTML } from "draft-js-export-html";
 import withRouter from "../../shared/withRouter";
+import { writeIssue } from "./helpers";
+import QuillEditor from "./toolbar/QuillEditor";
 
 
 const EditForm = (props) => {
@@ -16,41 +11,29 @@ const EditForm = (props) => {
   const [description, setDescription] = useState('')
   const [attachments, setAttachments] = useState([]);
   const [modalShow, setModalShow] = useState(false);
-  console.log(props.itemFieldOptions)
   const assigneeList = props.itemFieldOptions['assignees'] ?? []
   const tradeList = props.itemFieldOptions['trades'] ?? []
   const locationsList = props.itemFieldOptions['locations'] ?? []
-  const obsTypesList = props.itemFieldOptions['types'] ?? []
+  const obsTypesList = props.itemFieldOptions['types'] ?? [{id: 0}]
   const handleOnClick = () => setModalShow(true);
+  const [createLoading, setCreateLoading] = useState(false)
 
   const nextNumber = () => {
     let numbers = props.items.map((item)=>item.number)
     console.log(numbers)
-    return Math.max(...numbers) + 1
+    return String(Math.max(...numbers) + 1)
   }
 
   const initialize = () => {
     let obj = {}
-    let descState = props.item.description
-    // if (props.function === "edit") {
-    //   const blocksFromHTML = convertFromHTML(
-    //     props.item.description ? props.item.description : ""
-    //   );
-    //   const contentState = ContentState.createFromBlockArray(
-    //     blocksFromHTML.contentBlocks,
-    //     blocksFromHTML.entityMap
-    //   );
-    //   descState = EditorState.createWithContent(contentState);
-    // } else {
-    //   descState = EditorState.createEmpty();
-    // }
+    let descState = props.item.description ? props.item.description  : "<p> - Enter Description Here - </p>"
     setDescription(descState)
     obj.number = props.item.number ? String(props.item.number) : nextNumber()
     obj.title = props.item.name
     obj.trade_id = props.item.trade ? String(props.item.original.trade.id) : null
     obj.assignee_id = props.item.assignee ? String(props.item.original.assignee.id) : null
     obj.status = props.item.status ? props.item.status.toLowerCase() : 'initiated'
-    obj.type_id = props.item.type ? String(props.item.original.type.id) : '0'
+    obj.type_id = props.item.type ? String(props.item.original.type.id) : '562949953689707'
     obj.priority = props.item.priority
     obj.location_id = props.item.location ? String(props.item.original.location.id) : null
     obj.itemDate = props.item.item_date
@@ -62,6 +45,7 @@ const EditForm = (props) => {
   useEffect(()=> {
     initialize()
   }, [props.item])
+
 
   const handleCancel = () => {
     console.log('reinitialized form')
@@ -84,6 +68,8 @@ const EditForm = (props) => {
     console.log(files);
     setAttachments(files);
   };
+      
+
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -97,7 +83,7 @@ const EditForm = (props) => {
     new_item.assignee_id = formState.assignee_id ? formState.assignee_id : null;
     new_item.priority = formState.priority ? formState.priority : null;
     new_item.trade_id = formState.trade_id ? formState.trade_id : null;
-    new_item.type_id = formState.type_id ? formState.type_id : 562949953689707 //commissioning
+    new_item.type_id = formState.type_id ? formState.type_id : '562949953689707'; //commissioning
     new_item.location_id = formState.location_id ? formState.location_id : null;
     if (formState.itemDate) {
       new_item.custom_field_70415 = new Date(formState.itemDate);
@@ -116,12 +102,17 @@ const EditForm = (props) => {
     //   obs.checklist_item_id = selected_inspection.checklist_items.slice(-1)[0].id
     // }
     console.log(new_item)
-    if (props.function === "edit") {
-      props.updateObs(props.params.project_id, props.item.id, new_item, attachments);
-      // props.setItemLoading(props.item.id);
+    if (props.function === "edit") { 
+      // Edit  
+      props.setSaving(true) 
+      writeIssue('PATCH', props.params.project_id, props.item.id, new_item, attachments).then(
+                r=>props.setChangedIssue(r)).then(()=>props.setSaving(false))
     } else {
-      props.createObs(props.params.project_id, new_item, attachments)
-      // props.setCreateLoading(true)
+      // create
+      setCreateLoading(true)
+      console.log("Creating Item")
+      writeIssue('POST', props.params.project_id, null, new_item, attachments).then(
+        r=>props.setChangedIssue(r)).then(()=>setCreateLoading(false))
     }
     setAttachments([]);
     setModalShow(false);
@@ -129,13 +120,16 @@ const EditForm = (props) => {
 
   const onDeleteClick = () => {
     console.log('deleting')
-    props.deleteObs(props.params.project_id, props.item.id)
+    const url = `/api/projects/${props.params.project_id}/issues/${props.item.id}`;
+    fetch(url, { method: 'DELETE', credentials: "same-origin"}).then((r) => r.json());
+    props.setDeletedIssueID(props.item.id)
     setModalShow(false)
   }
 
   return (
     <>
       <div style={{ cursor: "pointer" }} onClick={handleOnClick}>
+      {createLoading ? <span>Creating Item...<span className="spinner-grow text-primary"></span></span> : <></>}
         {props.text}
       </div>
       <Modal
@@ -245,19 +239,7 @@ const EditForm = (props) => {
                   backgroundColor: "white",
                 }}
               >
-                {/* <Editor
-                  editorState={description}
-                  onEditorStateChange={setDescription}
-                  toolbar={{
-                    options: [
-                      // "inline",
-                      "list",
-                      "textAlign",
-                      "link",
-                      "history",
-                    ],
-                  }}
-                /> */}
+                {<QuillEditor editorHtml={description} setEditorHtml={setDescription}/>}
               </div>
             </div>
             <div className="d-flex justify-content-between">

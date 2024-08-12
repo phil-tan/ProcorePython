@@ -19,6 +19,9 @@ def obs_list_url(project_id):
 def obs_url(obs_id, project_id):
   return f"{BASE_URL}/rest/v1.0/observations/items/{obs_id}?project_id={project_id}"
 
+def delete_obs_url(obs_id, project_id):
+  return f"{BASE_URL}/rest/v1.0/projects/{project_id}/observations/items/{obs_id}"
+
 def obs_responses_url(obs_id, project_id):
   return f"{BASE_URL}/rest/v1.0/observations/items/{obs_id}/response_logs?project_id={project_id}"
 

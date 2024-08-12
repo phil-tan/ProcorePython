@@ -12,6 +12,8 @@ const IssuesPage = (props) => {
    const [issues, setIssues] = useState([]);
    const [issuesOptions, setIssuesOptions] = useState({'assignees':[], 'locations':[], 'types':[], 'trades':[]  })
    const [loading, setLoading] = useState(true)
+   const [createLoading, setCreateLoading] = useState(false)
+   const [changedIssue, setChangedIssue] = useState({})
    
    useEffect(() => {
       fetch(`/api/projects/${props.params.project_id}`).then((r)=>r.json()).then((data)=>setProject(data))
@@ -20,7 +22,18 @@ const IssuesPage = (props) => {
       fetch(`/api/projects/${props.params.project_id}/issues/fields`).then((r)=>r.json()).then((data)=>setIssuesOptions(data))
    }, []);
 
-   console.log(issuesOptions)
+   useEffect(()=>{
+    if(Object.keys(changedIssue).length > 0){ 
+      if(!issues.some(item => item.id === changedIssue.id)){
+        const issues_list = [changedIssue, ...issues]
+        setIssues(issues_list)
+      }else{
+        setIssues(issues.map(item => item.id === changedIssue.id ? changedIssue : item))
+      }
+    }
+   },[changedIssue])
+
+  console.log(createLoading)
 
   return (
     <div>
@@ -42,22 +55,16 @@ const IssuesPage = (props) => {
       <div className="text-end mb-2">
       {/* <ObsPDFDownloadLink /> */}
       </div>
-      <div className="toolbar row gx-1 mb-2">
-      <div className="col-3">
-         {/* <ColumnCheckBoxForm columns={props.obs_columns} /> */}
-      </div>
-      <div className="col-9">
-         {/* <FilterForm
-            columns={props.obs_columns.filter((col) => col.filterable)}
-         /> */}
-      </div>
-      </div>
 
       <div className="d-flex justify-content-end">
-      {/* {props.create_loading ? <span>Creating Item...<span className="spinner-grow text-primary"></span></span> : <></>} */}
+      {createLoading ? <span>Creating Item...<span className="spinner-grow text-primary"></span></span> : <></>}
+      {createLoading ? <span>Creating Item...</span> : <></>}
       </div>
 
-      <List project={project} items={issues} itemFieldOptions={issuesOptions}/>
+      <List project={project} 
+            items={issues} itemFieldOptions={issuesOptions} 
+            setChangedIssue={setChangedIssue}
+            />
 
     </div>
 

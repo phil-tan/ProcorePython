@@ -12,7 +12,6 @@ const TableCell = (props) => {
 
   let div = <tr>TableCell</tr>
   // return(div)
-  console.log(props.itemFieldOptions)
   switch (props.field) {
     case "number":
       div = (
@@ -48,6 +47,9 @@ const TableCell = (props) => {
           function="edit"
           origin_form=""
           itemFieldOptions={props.itemFieldOptions}
+          setChangedIssue={props.setChangedIssue}
+          setDeletedIssueID = {props.setDeletedIssueID}
+          setSaving={props.setSaving}
           />
           <div className="text-justify" dangerouslySetInnerHTML={{
               __html: standardizeFontSize(props.item.description),

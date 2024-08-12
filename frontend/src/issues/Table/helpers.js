@@ -110,3 +110,34 @@ export function openLink(url) {
     console.error('Error:', error);
   });
 }
+
+export async function writeIssue(method, project_id, item_id, item, attachments) {
+  console.log("Updating issue");
+  const formData = new FormData();
+  formData.append('project_id', project_id);
+  formData.append('item', JSON.stringify(item));
+  console.log(attachments)
+  attachments.forEach((file, index) => {
+    formData.append(`attachments[${index}]`, file);
+  });
+  let url = ''
+  if(method === 'PATCH'){
+    url = `/api/projects/${project_id}/issues/${item_id}`;
+  }else{
+    url = `/api/projects/${project_id}/issues`;
+  }
+
+  const resp = await fetch(url, {
+    method: method,
+    credentials: "same-origin",
+    // headers: {
+    //   // 'Content-Type': 'multipart/form-data',
+    //   // "X-CSRF-Token": document
+    //   //   .querySelector('meta[name="csrf-token"]')
+    //   //   .getAttribute("content"),
+    // },
+    body: formData,
+    }).then((r) => r.json());
+  
+return resp
+}

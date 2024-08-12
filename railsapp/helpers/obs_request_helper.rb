@@ -132,6 +132,7 @@ module ObsRequestHelper
     request["Authorization"] = "Bearer #{procore_token['access_token']}"
     request['Procore-Company-Id'] = ENV['COMPANY_ID']
     request.set_form form_data, 'multipart/form-data'
+    p form_data
     response = https.request(request)
     return response.read_body
   end

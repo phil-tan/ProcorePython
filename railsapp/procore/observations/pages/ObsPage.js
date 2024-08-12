@@ -49,10 +49,11 @@ const ObsPage = (props) => {
               />
             </div>
           </div>
+          {/* cREATE fORM */}
           <div className="d-flex justify-content-end">
             {props.create_loading ? <span>Creating Item...<span className="spinner-grow text-primary"></span></span> : <></>}
             <span>
-              <EditForm
+              {/* <EditForm
                 text=<button
                   className="btn btn-md"
                   style={{ color: "white", backgroundColor: "orangered" }}
@@ -61,7 +62,7 @@ const ObsPage = (props) => {
                 </button>
                 obs={{}}
                 function="add"
-              />
+              /> */}
             </span>
           </div>
           <div id="obs-log" style={{ printColorAdjust: "exact" }}>

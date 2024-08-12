@@ -254,7 +254,11 @@ def refresh_app():
         }
     response = requests.post(BASE_URL+'/oauth/token', data=data, headers=headers)
     response_json = response.json()
-    session['access_token'] = response_json['access_token']
-    session['refresh_token'] = response_json['refresh_token']
-    session['created_at'] = update_date(response_json['created_at'])
-    session['expires_at'] = update_expire(response_json['created_at'])
+    print(response_json)
+    if response_json.get("access_token"):
+        session['access_token'] = response_json['access_token']
+        session['refresh_token'] = response_json['refresh_token']
+        session['created_at'] = update_date(response_json['created_at'])
+        session['expires_at'] = update_expire(response_json['created_at'])
+    else:
+        return redirect(url_for(app_login))

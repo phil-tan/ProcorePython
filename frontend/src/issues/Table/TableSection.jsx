@@ -23,7 +23,8 @@ const TableSection = (props) => {
             {props.showItems.map((item) => {
               return (
                 <TableRow columns={props.columns} key={item.id} item={item} show_photos={false} 
-                itemFieldOptions={props.itemFieldOptions}
+                itemFieldOptions={props.itemFieldOptions} setChangedIssue={props.setChangedIssue} 
+                setDeletedIssueID = {props.setDeletedIssueID}
                 />
               );
             })}

@@ -4,6 +4,7 @@ from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from .controllers.oauth import login_required, refresh_app
 from flask_cors import CORS
+# from flask_wtf.csrf import CSRFProtect, generate_csrf
 import os
 
 # init SQLAlchemy so we can use it later in our models
@@ -15,10 +16,16 @@ def create_app():
 
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    # csrf = CSRFProtect(app)
 
     db.init_app(app)
     # app.app_context().push()
     # db.create_all()
+
+    # @app.after_request
+    # def add_csrf_header(response):
+    #     response.headers["X-CSRF-Token"] = generate_csrf()
+    #     return response
 
     # Serve the React pages route here
     

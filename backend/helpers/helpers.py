@@ -4,9 +4,15 @@ import http.client
 from ..controllers.oauth import CLIENT_ID, BASE_URL, COMPANY_ID, login_required, session
 import asyncio
 import aiohttp
+import requests
 from datetime import datetime
 from dateutil.parser import parse
 from copy import copy
+import os
+import json
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+from .endpoints import obs_list_url, obs_url, obs_responses_url, \
+               trades_url, obs_assignees_url, locations_url, obs_types_url
 
 
 def api_fetch(method, endpoint, headers):
@@ -93,3 +99,31 @@ def item_date(item):
 def format_date(date_str):
     date_obj = parse(date_str)
     return date_obj.strftime('%Y-%m-%d')
+
+
+def issue_update_http(request, headers, project_id, issue_id):
+    item = json.loads(request.form.get('item'))
+    attachments= request.files
+    fields = [(f"observation[{field}]", val) for field, val in item.items()]
+    fields.append(("project_id", f"{project_id}"))
+    for key, file in attachments.items():
+        fields.append(("attachments[]", (file.filename, file, file.content_type)))
+    print(fields)
+    form_data = MultipartEncoder(
+        fields=fields
+    ) 
+    headers["Content-Type"] = form_data.content_type
+    if request.method == 'PATCH': #edit
+        endpoint = obs_url(project_id=project_id, obs_id=issue_id)
+        response = requests.patch(endpoint, headers=headers, data=form_data)
+        print('EDIT ITEM')
+    else: #create
+        endpoint = obs_list_url(project_id=project_id)
+        response = requests.post(endpoint, headers=headers, data=form_data)
+        print('CREATE ITEM')
+        print(response.text)
+    updated_item = simplify_observation(json.loads(response.text))
+    # get the editted issue here
+
+    return updated_item
+
